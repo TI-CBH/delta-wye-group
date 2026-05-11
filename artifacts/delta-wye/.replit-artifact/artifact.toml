@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Delta Wye Group"
+version = "1.0.0"
+id = "artifacts/delta-wye"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25488
+
+[services.development]
+run = "pnpm --filter @workspace/delta-wye run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/delta-wye", "run", "build" ]
+publicDir = "artifacts/delta-wye/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25488"
+BASE_PATH = "/"
