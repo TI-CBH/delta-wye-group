@@ -11,12 +11,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { useEffect, useState } from "react";
 
-import logoPath from "@assets/iconbackground-scaled_1778510519781.png";
+import logoPath from "@/assets/images/logo.png";
 import heroBgPath from "@/assets/images/hero_bg.png";
 
-import indImgPath from "@assets/industrial-contract-electrical_1778511870964.jpg";
-import resImgPath from "@assets/DWG_Thermal_1778513473193.png";
-import comImgPath from "@assets/general-commercial-services_1778512818212.jpg";
+import indImgPath from "@/assets/images/industrial-real.jpg";
+import resImgPath from "@/assets/images/thermal.png";
+import comImgPath from "@/assets/images/commercial-real.jpg";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
