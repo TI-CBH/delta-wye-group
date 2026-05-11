@@ -12,10 +12,10 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { useEffect, useState } from "react";
 
 import logoPath from "@/assets/images/logo.png";
-import heroBgPath from "@/assets/images/hero_bg.png";
+import heroBgPath from "@/assets/images/hero_bg.jpg";
 
 import indImgPath from "@/assets/images/industrial-real.jpg";
-import resImgPath from "@/assets/images/thermal.png";
+import resImgPath from "@/assets/images/thermal.jpg";
 import comImgPath from "@/assets/images/commercial-real.jpg";
 
 const contactSchema = z.object({
