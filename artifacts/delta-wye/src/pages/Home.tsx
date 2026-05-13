@@ -226,7 +226,8 @@ export default function Home() {
                 variants={fadeIn}
                 className="text-lg md:text-xl text-white/70 mb-10 max-w-xl font-medium leading-relaxed"
               >
-                Trusted Arkansas electricians since 2011. We show up fast. We fix it right.
+                Trusted Arkansas electricians since 2011.{" "}<br />
+                We show up. We fix it right.{" "}<br />
                 When no one else picks up — we answer.
               </motion.p>
 
