@@ -246,7 +246,10 @@ export default function Home() {
                   size="lg"
                   variant="outline"
                   onClick={() => scrollTo("services")}
-                  className="border-white/30 text-white hover:bg-white/10 font-bold tracking-widest uppercase text-base h-14 px-8"
+                  className="border-2 border-teal bg-transparent text-teal hover:bg-teal hover:text-navy font-bold tracking-widest uppercase text-base h-14 px-8 transition-colors"
+                  style={{ borderColor: "#00B4CC", color: "#00B4CC" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#00B4CC"; (e.currentTarget as HTMLButtonElement).style.color = "#0A1628"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "#00B4CC"; }}
                   data-testid="button-hero-secondary"
                 >
                   Our Services
