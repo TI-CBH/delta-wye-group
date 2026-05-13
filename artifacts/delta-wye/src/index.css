@@ -265,7 +265,7 @@
 .btn-teal-outline {
   border: 2px solid #00B4CC;
   background-color: transparent;
-  color: #00B4CC;
+  color: #ffffff;
   transition: background-color 0.2s, color 0.2s;
 }
 
