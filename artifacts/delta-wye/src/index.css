@@ -261,3 +261,15 @@
 .font-display {
   font-family: var(--font-display);
 }
+
+.btn-teal-outline {
+  border: 2px solid #00B4CC;
+  background-color: transparent;
+  color: #00B4CC;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-teal-outline:hover {
+  background-color: #00B4CC;
+  color: #0A1628;
+}

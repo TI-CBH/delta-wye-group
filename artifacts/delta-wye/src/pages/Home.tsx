@@ -132,7 +132,7 @@ export default function Home() {
             </div>
             <Button
               onClick={() => scrollTo("contact")}
-              className="font-bold tracking-widest uppercase text-sm px-6"
+              className="font-bold tracking-widest uppercase text-sm px-6 border-0"
               style={{ backgroundColor: "#00B4CC", color: "#0A1628" }}
               data-testid="button-nav-cta"
             >
@@ -235,25 +235,20 @@ export default function Home() {
                 <Button
                   size="lg"
                   onClick={() => scrollTo("contact")}
-                  className="font-bold tracking-widest uppercase text-base h-14 px-8"
+                  className="font-bold tracking-widest uppercase text-base h-14 px-8 border-0"
                   style={{ backgroundColor: "#1A5BC4", color: "#fff" }}
                   data-testid="button-hero-cta"
                 >
                   Request Service
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
+                <button
                   onClick={() => scrollTo("services")}
-                  className="border-2 border-teal bg-transparent text-teal hover:bg-teal hover:text-navy font-bold tracking-widest uppercase text-base h-14 px-8 transition-colors"
-                  style={{ borderColor: "#00B4CC", color: "#00B4CC" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#00B4CC"; (e.currentTarget as HTMLButtonElement).style.color = "#0A1628"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; (e.currentTarget as HTMLButtonElement).style.color = "#00B4CC"; }}
+                  className="btn-teal-outline font-bold tracking-widest uppercase text-base h-14 px-8 rounded-md inline-flex items-center justify-center"
                   data-testid="button-hero-secondary"
                 >
                   Our Services
-                </Button>
+                </button>
               </motion.div>
 
               <motion.div variants={fadeIn} className="mt-12 flex flex-wrap gap-6 text-sm font-semibold text-white/60 uppercase tracking-widest">
