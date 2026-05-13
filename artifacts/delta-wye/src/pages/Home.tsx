@@ -214,12 +214,12 @@ export default function Home() {
               >
                 PUTTING<br />
                 <span
-                  className="text-transparent bg-clip-text animate-gradient-text"
+                  className="text-transparent bg-clip-text animate-gradient-text font-bold"
                   style={{ backgroundImage: "linear-gradient(90deg, #1A5BC4, #00B4CC, #1A5BC4)" }}
                 >
                   POWER
                 </span> TO<br />
-                WORK.
+                WORK FOR YOU.
               </motion.h1>
 
               <motion.p
