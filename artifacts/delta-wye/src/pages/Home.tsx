@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import logoPath from "@/assets/images/logo.png";
 import heroBgPath from "@/assets/images/hero_bg.jpg";
@@ -41,6 +41,15 @@ export default function Home() {
   const { toast } = useToast();
   const [activeSection, setActiveSection] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const missionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: missionScroll } = useScroll({
+    target: missionRef,
+    offset: ["start end", "end start"],
+  });
+  const tri1Y = useTransform(missionScroll, [0, 1], [-60, 60]);
+  const tri2Y = useTransform(missionScroll, [0, 1], [40, -80]);
+  const tri3Y = useTransform(missionScroll, [0, 1], [-30, 50]);
 
   const form = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
@@ -416,18 +425,24 @@ export default function Home() {
       </section>
 
       {/* ── Mission / Values ───────────────────────────────────── */}
-      <section id="mission" className="py-24 md:py-36 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0D2B8C 0%, #1A5BC4 100%)" }}>
-        {/* Decorative triangle watermarks */}
+      <section ref={missionRef} id="mission" className="py-24 md:py-36 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0D2B8C 0%, #1A5BC4 100%)" }}>
+        {/* Decorative triangle watermarks — parallax */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <svg className="absolute -top-20 -right-20 w-96 h-96 opacity-10" viewBox="0 0 100 100" fill="none">
-            <polygon points="50,5 95,95 5,95" stroke="white" strokeWidth="1" fill="none" />
-          </svg>
-          <svg className="absolute -bottom-16 -left-16 w-80 h-80 opacity-10" viewBox="0 0 100 100" fill="none">
-            <polygon points="50,5 95,95 5,95" stroke="white" strokeWidth="1" fill="none" />
-          </svg>
-          <svg className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-5" viewBox="0 0 100 100" fill="none">
-            <polygon points="50,5 95,95 5,95" stroke="white" strokeWidth="0.5" fill="none" />
-          </svg>
+          <motion.div style={{ y: tri1Y }} className="absolute -top-20 -right-20 w-96 h-96">
+            <svg className="w-full h-full opacity-10" viewBox="0 0 100 100" fill="none">
+              <polygon points="50,5 95,95 5,95" stroke="white" strokeWidth="1" fill="none" />
+            </svg>
+          </motion.div>
+          <motion.div style={{ y: tri2Y }} className="absolute -bottom-16 -left-16 w-80 h-80">
+            <svg className="w-full h-full opacity-10" viewBox="0 0 100 100" fill="none">
+              <polygon points="50,5 95,95 5,95" stroke="white" strokeWidth="1" fill="none" />
+            </svg>
+          </motion.div>
+          <motion.div style={{ y: tri3Y }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]">
+            <svg className="w-full h-full opacity-5" viewBox="0 0 100 100" fill="none">
+              <polygon points="50,5 95,95 5,95" stroke="white" strokeWidth="0.5" fill="none" />
+            </svg>
+          </motion.div>
         </div>
 
         <div className="container mx-auto px-4 md:px-6 relative z-10">
