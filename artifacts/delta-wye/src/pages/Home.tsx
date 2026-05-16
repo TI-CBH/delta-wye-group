@@ -210,7 +210,7 @@ export default function Home() {
 
               <motion.h1
                 variants={fadeIn}
-                className="font-display md:text-[6.5rem] lg:text-[8rem] text-white tracking-wide mb-6 uppercase text-[80px] leading-[0.9]"
+                className="font-display md:text-[4.55rem] lg:text-[5.6rem] text-white tracking-wide mb-6 uppercase text-[56px] leading-[0.9]"
               >
                 PUTTING<br />
                 <span
