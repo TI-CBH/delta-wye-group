@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Phone, Mail, MapPin, ChevronRight, Zap } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import logoPath from "@/assets/images/logo.png";
 
 const fadeIn = {
@@ -60,6 +60,15 @@ const milestones = [
 
 export default function History() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start 85%", "end 25%"],
+  });
+  const lineProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
+  const lineScaleY = useTransform(lineProgress, [0, 1], [0, 1]);
+  const sparkOpacity = useTransform(lineProgress, [0, 0.04], [0, 1]);
 
   return (
     <div className="min-h-[100dvh] flex flex-col overflow-x-hidden dark" style={{ backgroundColor: "#0A1628", color: "#fff" }}>
@@ -181,18 +190,45 @@ export default function History() {
       </section>
 
       {/* ── Timeline ─────────────────────────────────────────────── */}
-      <section className="py-24 md:py-36" style={{ backgroundColor: "#0A1628" }}>
+      <section ref={timelineRef} className="py-24 md:py-36" style={{ backgroundColor: "#0A1628" }}>
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={staggerContainer}
             className="relative"
           >
-            {/* Vertical line */}
+            {/* Dim base line */}
             <div
               className="absolute left-[18px] md:left-1/2 top-0 bottom-0 w-px md:-translate-x-px"
-              style={{ background: "linear-gradient(to bottom, #1A5BC4, #00B4CC, #1A5BC444)" }}
+              style={{ backgroundColor: "rgba(26,91,196,0.18)" }}
             />
+
+            {/* Scroll-driven electric progress line */}
+            <motion.div
+              className="absolute left-[18px] md:left-1/2 top-0 bottom-0 w-px md:-translate-x-px origin-top"
+              style={{ scaleY: lineScaleY }}
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <div
+                className="w-full h-full"
+                style={{
+                  background: "linear-gradient(to bottom, #1A5BC4, #00B4CC)",
+                  boxShadow: "0 0 6px #00B4CC, 0 0 14px #1A5BC466",
+                }}
+              />
+              {/* Spark at the travelling tip */}
+              <motion.div
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 rounded-full pointer-events-none"
+                style={{
+                  backgroundColor: "#00B4CC",
+                  boxShadow: "0 0 10px #00B4CC, 0 0 22px #00B4CC88",
+                  opacity: sparkOpacity,
+                }}
+                animate={{ scale: [1, 1.8, 1] }}
+                transition={{ duration: 0.65, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </motion.div>
 
             {milestones.map((m, i) => {
               const isLeft = i % 2 === 0;
@@ -211,13 +247,30 @@ export default function History() {
                     <p className="text-white/60 leading-relaxed">{m.body}</p>
                   </div>
 
-                  {/* Dot */}
-                  <div
-                    className="absolute left-0 md:left-1/2 top-1 md:-translate-x-1/2 w-9 h-9 rounded-full border-2 border-[#1A5BC4] flex items-center justify-center shrink-0"
+                  {/* Ripple ring — expands outward when scrolled into view */}
+                  <motion.div
+                    className="absolute left-0 md:left-1/2 top-1 md:-translate-x-1/2 w-9 h-9 rounded-full pointer-events-none"
+                    style={{ border: "1px solid #00B4CC" }}
+                    initial={{ scale: 1, opacity: 0 }}
+                    whileInView={{ scale: [1, 2.8], opacity: [0.9, 0] }}
+                    viewport={{ once: true, margin: "-15%" }}
+                    transition={{ duration: 1.1, ease: "easeOut", delay: 0.15 }}
+                  />
+
+                  {/* Dot — lights up when scrolled into view */}
+                  <motion.div
+                    className="absolute left-0 md:left-1/2 top-1 md:-translate-x-1/2 w-9 h-9 rounded-full border-2 flex items-center justify-center shrink-0 z-10"
                     style={{ backgroundColor: "#0A1628" }}
+                    initial={{ borderColor: "#1A5BC4", boxShadow: "0 0 0px transparent" }}
+                    whileInView={{
+                      borderColor: ["#1A5BC4", "#00B4CC", "#00B4CC"],
+                      boxShadow: ["0 0 0px transparent", "0 0 18px #00B4CC", "0 0 8px #00B4CC55"],
+                    }}
+                    viewport={{ once: true, margin: "-15%" }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
                   >
                     <Zap className="h-4 w-4 text-[#00B4CC]" />
-                  </div>
+                  </motion.div>
 
                   {/* Spacer for alternating side */}
                   <div className="hidden md:block flex-1" />
