@@ -765,7 +765,7 @@ export default function Home() {
               </div>
 
               {formType === "service" ? (
-                <Form {...serviceForm}>
+                <Form key="service" {...serviceForm}>
                   <form onSubmit={serviceForm.handleSubmit(onServiceSubmit)} name="service-request" className="space-y-6">
                     <input type="hidden" name="form-name" value="service-request" />
                     <div style={{ display: "none" }} aria-hidden="true">
@@ -874,7 +874,7 @@ export default function Home() {
                   </form>
                 </Form>
               ) : (
-                <Form {...generalForm}>
+                <Form key="general" {...generalForm}>
                   <form onSubmit={generalForm.handleSubmit(onGeneralSubmit)} name="general-inquiry" className="space-y-6">
                     <input type="hidden" name="form-name" value="general-inquiry" />
                     <div style={{ display: "none" }} aria-hidden="true">
