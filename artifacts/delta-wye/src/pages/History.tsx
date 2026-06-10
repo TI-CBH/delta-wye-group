@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Phone, Mail, MapPin, ChevronRight, Zap } from "lucide-react";
 import { useState, useRef } from "react";
@@ -69,6 +69,19 @@ export default function History() {
   const lineProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
   const lineScaleY = useTransform(lineProgress, [0, 1], [0, 1]);
   const sparkOpacity = useTransform(lineProgress, [0, 0.04], [0, 1]);
+
+  const [activeMilestones, setActiveMilestones] = useState<Set<number>>(new Set());
+  useMotionValueEvent(lineProgress, "change", (latest) => {
+    setActiveMilestones(prev => {
+      const next = new Set(prev);
+      milestones.forEach((_, i) => {
+        // Distribute thresholds evenly from 0.05 to 0.95 across all milestones
+        const threshold = i * (0.9 / (milestones.length - 1)) + 0.05;
+        if (latest >= threshold && !prev.has(i)) next.add(i);
+      });
+      return next.size === prev.size ? prev : next;
+    });
+  });
 
   return (
     <div className="min-h-[100dvh] flex flex-col overflow-x-hidden dark" style={{ backgroundColor: "#0A1628", color: "#fff" }}>
@@ -248,26 +261,28 @@ export default function History() {
                     <p className="text-white/60 leading-relaxed">{m.body}</p>
                   </div>
 
-                  {/* Ripple ring — expands outward when scrolled into view */}
+                  {/* Ripple ring — fires when the line cursor reaches this circle */}
                   <motion.div
                     className="absolute left-0 md:left-1/2 top-1 md:-translate-x-1/2 w-9 h-9 rounded-full pointer-events-none"
                     style={{ border: "1px solid #00B4CC" }}
                     initial={{ scale: 1, opacity: 0 }}
-                    whileInView={{ scale: [1, 2.8], opacity: [0.9, 0] }}
-                    viewport={{ once: true, margin: "-15%" }}
-                    transition={{ duration: 1.1, ease: "easeOut", delay: 0.15 }}
+                    animate={activeMilestones.has(i)
+                      ? { scale: [1, 2.8], opacity: [0.9, 0] }
+                      : { scale: 1, opacity: 0 }}
+                    transition={{ duration: 1.1, ease: "easeOut", delay: 0.1 }}
                   />
 
-                  {/* Dot — lights up when scrolled into view */}
+                  {/* Dot — lights up when the line cursor reaches this circle */}
                   <motion.div
                     className="absolute left-0 md:left-1/2 top-1 md:-translate-x-1/2 w-9 h-9 rounded-full border-2 flex items-center justify-center shrink-0 z-10"
                     style={{ backgroundColor: "#0A1628" }}
                     initial={{ borderColor: "#1A5BC4", boxShadow: "0 0 0px transparent" }}
-                    whileInView={{
-                      borderColor: ["#1A5BC4", "#00B4CC", "#00B4CC"],
-                      boxShadow: ["0 0 0px transparent", "0 0 18px #00B4CC", "0 0 8px #00B4CC55"],
-                    }}
-                    viewport={{ once: true, margin: "-15%" }}
+                    animate={activeMilestones.has(i)
+                      ? {
+                          borderColor: ["#1A5BC4", "#00B4CC", "#00B4CC"],
+                          boxShadow: ["0 0 0px transparent", "0 0 18px #00B4CC", "0 0 8px #00B4CC55"],
+                        }
+                      : { borderColor: "#1A5BC4", boxShadow: "0 0 0px transparent" }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
                   >
                     <Zap className="h-4 w-4 text-[#00B4CC]" />
