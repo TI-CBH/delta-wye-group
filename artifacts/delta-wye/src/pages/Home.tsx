@@ -314,7 +314,7 @@ export default function Home() {
         </div>
 
         {/* Right: Team photo — desktop only */}
-        <div className="hidden md:block md:w-[46%] relative">
+        <div className="hidden md:block md:w-[55%] relative">
           <img
             src={teamPhotoPath}
             alt="Delta Wye Group team"
