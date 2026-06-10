@@ -15,7 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { useEffect, useRef, useState } from "react";
 
 import logoPath from "@/assets/images/logo.png";
-import heroBgPath from "@/assets/images/hero_bg.jpg";
+import teamPhotoPath from "@/assets/images/team-photo.png";
 import indImgPath from "@/assets/images/industrial-real.jpg";
 import resImgPath from "@/assets/images/thermal.jpg";
 import comImgPath from "@/assets/images/commercial-real.jpg";
@@ -195,15 +195,11 @@ export default function Home() {
       {/* ── Hero ───────────────────────────────────────────────── */}
       <section id="home" className="relative pt-32 pb-20 md:pt-48 md:pb-32 min-h-[92vh] flex items-center">
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <video
-            autoPlay muted loop playsInline
-            poster={heroBgPath}
-            className="w-full h-full object-cover opacity-40"
-          >
-            <source src="/electrical_hero.mp4" type="video/mp4" />
-            <img src={heroBgPath} alt="Electrical infrastructure" className="w-full h-full object-cover opacity-40" />
-          </video>
-          {/* Deep blue gradient overlay — brand blue */}
+          <img
+            src={teamPhotoPath}
+            alt="Delta Wye Group team"
+            className="w-full h-full object-cover opacity-40 object-top"
+          />
           <div className="absolute inset-0" style={{ background: "linear-gradient(to top, #0A1628 10%, #0D2B8C88 60%, #0D2B8C44 100%)" }} />
           <div className="absolute inset-0" style={{ background: "linear-gradient(to right, #0A162899 0%, #0A162844 60%, transparent 100%)" }} />
         </div>
