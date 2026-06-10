@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>Delta Wye Group</title>
-    <meta name="description" content="Delta Wye Group — built on Replit. Update this description to reflect the app." />
+    <meta name="description" content="Delta Wye Group — Licensed Arkansas electricians since 2011. Commercial, industrial, and residential electrical service. 24/7/365 emergency dispatch." />
     <meta name="robots" content="index, follow" />
-    <meta property="og:title" content="Delta Wye Group" />
-    <meta property="og:description" content="Delta Wye Group — built on Replit. Update this description to reflect the app." />
+    <meta property="og:title" content="Delta Wye Group | Arkansas Electrical Contractors" />
+    <meta property="og:description" content="Trusted Arkansas electricians since 2011. Commercial, industrial, and residential. 24/7 emergency response. Call 501.733.9922." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Delta Wye Group" />
-    <meta name="twitter:description" content="Delta Wye Group — built on Replit. Update this description to reflect the app." />
+    <meta name="twitter:title" content="Delta Wye Group | Arkansas Electrical Contractors" />
+    <meta name="twitter:description" content="Trusted Arkansas electricians since 2011. Commercial, industrial, and residential. 24/7 emergency response. Call 501.733.9922." />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,5 +20,21 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Netlify Forms detection (required for React SPAs) -->
+    <form name="service-request" netlify netlify-honeypot="bot-field" hidden>
+      <input name="bot-field" />
+      <input name="name" />
+      <input name="email" />
+      <input name="phone" />
+      <input name="serviceType" />
+      <input name="message" />
+    </form>
+    <form name="general-inquiry" netlify netlify-honeypot="bot-field" hidden>
+      <input name="bot-field" />
+      <input name="name" />
+      <input name="email" />
+      <input name="message" />
+    </form>
   </body>
 </html>

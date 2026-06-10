@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useRef, useState } from "react";
 
 import logoPath from "@/assets/images/logo.png";
@@ -20,11 +21,18 @@ import indImgPath from "@/assets/images/industrial-real.jpg";
 import resImgPath from "@/assets/images/thermal.jpg";
 import comImgPath from "@/assets/images/commercial-real.jpg";
 
-const contactSchema = z.object({
+const serviceSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number is required"),
-  message: z.string().min(10, "Please describe your project or issue"),
+  serviceType: z.string().min(1, "Please select a service type"),
+  message: z.string().min(10, "Please describe your project"),
+});
+
+const generalSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  message: z.string().min(10, "Please enter your message"),
 });
 
 const fadeIn = {
@@ -51,18 +59,55 @@ export default function Home() {
   const tri2Y = useTransform(missionScroll, [0, 1], [40, -80]);
   const tri3Y = useTransform(missionScroll, [0, 1], [-30, 50]);
 
-  const form = useForm<z.infer<typeof contactSchema>>({
-    resolver: zodResolver(contactSchema),
-    defaultValues: { name: "", email: "", phone: "", message: "" },
+  const [formType, setFormType] = useState<"service" | "general">("service");
+
+  const serviceForm = useForm<z.infer<typeof serviceSchema>>({
+    resolver: zodResolver(serviceSchema),
+    defaultValues: { name: "", email: "", phone: "", serviceType: "", message: "" },
   });
 
-  const onSubmit = (_data: z.infer<typeof contactSchema>) => {
-    toast({
-      title: "Request Received",
-      description: "Our dispatch team will be in touch shortly. For emergencies, call 501.733.9922.",
-      duration: 6000,
-    });
-    form.reset();
+  const generalForm = useForm<z.infer<typeof generalSchema>>({
+    resolver: zodResolver(generalSchema),
+    defaultValues: { name: "", email: "", message: "" },
+  });
+
+  const encode = (data: Record<string, string>) =>
+    Object.keys(data).map(k => encodeURIComponent(k) + "=" + encodeURIComponent(data[k])).join("&");
+
+  const onServiceSubmit = async (data: z.infer<typeof serviceSchema>) => {
+    try {
+      await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode({ "form-name": "service-request", "bot-field": "", ...data }),
+      });
+      toast({
+        title: "Service Request Sent",
+        description: "Our dispatch team will be in touch shortly. For emergencies, call 501.733.9922.",
+        duration: 6000,
+      });
+      serviceForm.reset();
+    } catch {
+      toast({ title: "Submission Error", description: "Please call 501.733.9922 or email dispatch@deltawyegroup.com.", duration: 6000 });
+    }
+  };
+
+  const onGeneralSubmit = async (data: z.infer<typeof generalSchema>) => {
+    try {
+      await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode({ "form-name": "general-inquiry", "bot-field": "", ...data }),
+      });
+      toast({
+        title: "Message Sent",
+        description: "We received your message and will respond soon.",
+        duration: 6000,
+      });
+      generalForm.reset();
+    } catch {
+      toast({ title: "Submission Error", description: "Please call 501.733.9922 or email directly.", duration: 6000 });
+    }
   };
 
   const scrollTo = (id: string) => {
@@ -634,12 +679,23 @@ export default function Home() {
                   </a>
                   <p className="text-white/50 text-xs mt-1">Press x1 for emergency dispatch</p>
                 </div>
-                <div>
-                  <div className="text-[#00B4CC] text-xs font-bold uppercase tracking-[0.25em] mb-1">Email Dispatch</div>
-                  <a href="mailto:dispatch@deltawyegroup.com" className="text-base font-medium text-white/80 hover:text-white transition-colors">
-                    dispatch@deltawyegroup.com
-                  </a>
-                </div>
+                {formType === "service" ? (
+                  <div>
+                    <div className="text-[#00B4CC] text-xs font-bold uppercase tracking-[0.25em] mb-1">Email Dispatch</div>
+                    <a href="mailto:dispatch@deltawyegroup.com" className="text-base font-medium text-white/80 hover:text-white transition-colors">
+                      dispatch@deltawyegroup.com
+                    </a>
+                    <p className="text-white/40 text-xs mt-1">Service requests &amp; work orders</p>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="text-[#00B4CC] text-xs font-bold uppercase tracking-[0.25em] mb-1">General Inquiries</div>
+                    <a href="mailto:jonathan@deltawyegroup.com" className="text-base font-medium text-white/80 hover:text-white transition-colors">
+                      jonathan@deltawyegroup.com
+                    </a>
+                    <p className="text-white/40 text-xs mt-1">Office &amp; general questions</p>
+                  </div>
+                )}
                 <div>
                   <div className="text-[#00B4CC] text-xs font-bold uppercase tracking-[0.25em] mb-1">Address</div>
                   <address className="text-base text-white/60 not-italic leading-relaxed">
@@ -662,80 +718,205 @@ export default function Home() {
               className="lg:col-span-3 border border-white/10 p-8 md:p-10 rounded-lg"
               style={{ backgroundColor: "rgba(255,255,255,0.04)" }}
             >
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Form type tabs */}
+              <div className="flex rounded-md overflow-hidden border border-white/10 mb-8">
+                <button
+                  type="button"
+                  onClick={() => setFormType("service")}
+                  className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest transition-colors ${
+                    formType === "service" ? "bg-[#1A5BC4] text-white" : "bg-transparent text-white/50 hover:text-white/70"
+                  }`}
+                >
+                  Service Request
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormType("general")}
+                  className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest transition-colors border-l border-white/10 ${
+                    formType === "general" ? "bg-[#1A5BC4] text-white" : "bg-transparent text-white/50 hover:text-white/70"
+                  }`}
+                >
+                  General Inquiry
+                </button>
+              </div>
+
+              {formType === "service" ? (
+                <Form {...serviceForm}>
+                  <form onSubmit={serviceForm.handleSubmit(onServiceSubmit)} name="service-request" className="space-y-6">
+                    <input type="hidden" name="form-name" value="service-request" />
+                    <div style={{ display: "none" }} aria-hidden="true">
+                      <input name="bot-field" tabIndex={-1} autoComplete="off" />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={serviceForm.control} name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Full Name</Label>
+                            <FormControl>
+                              <Input placeholder="John Doe" className="bg-white/5 border-white/10 focus-visible:ring-primary h-12 text-white placeholder:text-white/30" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={serviceForm.control} name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Phone Number</Label>
+                            <FormControl>
+                              <Input placeholder="(501) 555-0123" className="bg-white/5 border-white/10 focus-visible:ring-primary h-12 text-white placeholder:text-white/30" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
                     <FormField
-                      control={form.control} name="name"
+                      control={serviceForm.control} name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Email Address</Label>
+                          <FormControl>
+                            <Input placeholder="you@example.com" className="bg-white/5 border-white/10 focus-visible:ring-primary h-12 text-white placeholder:text-white/30" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={serviceForm.control} name="serviceType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Service Type</Label>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="bg-white/5 border-white/10 h-12 text-white">
+                                <SelectValue placeholder="Select a service type" className="text-white/30" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="bg-[#0D1F3C] border-white/10">
+                              {[
+                                "Commercial & Industrial",
+                                "Residential Service",
+                                "New Construction / Remodel",
+                                "Generator Installation",
+                                "Vandal Deterrents",
+                                "Property Audit / Lighting Retrofit",
+                                "Emergency Service",
+                                "Other",
+                              ].map(type => (
+                                <SelectItem key={type} value={type} className="text-white focus:bg-white/10 focus:text-white">{type}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={serviceForm.control} name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Project Details / Issue</Label>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Describe what you need help with. Include access instructions if needed."
+                              className="bg-white/5 border-white/10 focus-visible:ring-primary min-h-[120px] resize-none text-white placeholder:text-white/30"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="submit"
+                      className="w-full font-bold tracking-widest uppercase h-14 text-base mt-2"
+                      style={{ backgroundColor: "#1A5BC4", color: "#fff" }}
+                    >
+                      Submit Service Request
+                    </Button>
+
+                    <p className="text-white/30 text-xs text-center leading-relaxed">
+                      Routes to our dispatch team. For emergencies, call <a href="tel:5017339922" className="text-[#00B4CC] hover:underline">501.733.9922</a>.
+                    </p>
+                  </form>
+                </Form>
+              ) : (
+                <Form {...generalForm}>
+                  <form onSubmit={generalForm.handleSubmit(onGeneralSubmit)} name="general-inquiry" className="space-y-6">
+                    <input type="hidden" name="form-name" value="general-inquiry" />
+                    <div style={{ display: "none" }} aria-hidden="true">
+                      <input name="bot-field" tabIndex={-1} autoComplete="off" />
+                    </div>
+
+                    <FormField
+                      control={generalForm.control} name="name"
                       render={({ field }) => (
                         <FormItem>
                           <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Full Name</Label>
                           <FormControl>
-                            <Input placeholder="John Doe" className="bg-white/5 border-white/10 focus-visible:ring-primary h-12 text-white placeholder:text-white/30" {...field} data-testid="input-contact-name" />
+                            <Input placeholder="John Doe" className="bg-white/5 border-white/10 focus-visible:ring-primary h-12 text-white placeholder:text-white/30" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
                     <FormField
-                      control={form.control} name="phone"
+                      control={generalForm.control} name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Phone Number</Label>
+                          <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Email Address</Label>
                           <FormControl>
-                            <Input placeholder="(501) 555-0123" className="bg-white/5 border-white/10 focus-visible:ring-primary h-12 text-white placeholder:text-white/30" {...field} data-testid="input-contact-phone" />
+                            <Input placeholder="you@example.com" className="bg-white/5 border-white/10 focus-visible:ring-primary h-12 text-white placeholder:text-white/30" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <FormField
-                    control={form.control} name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Email Address</Label>
-                        <FormControl>
-                          <Input placeholder="you@example.com" className="bg-white/5 border-white/10 focus-visible:ring-primary h-12 text-white placeholder:text-white/30" {...field} data-testid="input-contact-email" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={generalForm.control} name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Message</Label>
+                          <FormControl>
+                            <Textarea
+                              placeholder="How can we help you?"
+                              className="bg-white/5 border-white/10 focus-visible:ring-primary min-h-[160px] resize-none text-white placeholder:text-white/30"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={form.control} name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Label className="text-xs font-bold text-white/50 uppercase tracking-widest">Project Details / Issue</Label>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Describe what you need help with. Include access instructions (codes, keys, secret handshakes, etc.)."
-                            className="bg-white/5 border-white/10 focus-visible:ring-primary min-h-[140px] resize-none text-white placeholder:text-white/30"
-                            {...field}
-                            data-testid="input-contact-message"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <Button
+                      type="submit"
+                      className="w-full font-bold tracking-widest uppercase h-14 text-base mt-2"
+                      style={{ backgroundColor: "#1A5BC4", color: "#fff" }}
+                    >
+                      Send Message
+                    </Button>
 
-                  <Button
-                    type="submit"
-                    className="w-full font-bold tracking-widest uppercase h-14 text-base mt-2"
-                    style={{ backgroundColor: "#1A5BC4", color: "#fff" }}
-                    data-testid="button-contact-submit"
-                  >
-                    Submit Request
-                  </Button>
-
-                  <p className="text-white/30 text-xs text-center leading-relaxed">
-                    For emergencies after hours, call <a href="tel:5017339922" className="text-[#00B4CC] hover:underline">501.733.9922</a> instead.
-                  </p>
-                </form>
-              </Form>
+                    <p className="text-white/30 text-xs text-center leading-relaxed">
+                      Need service instead?{" "}
+                      <button type="button" onClick={() => setFormType("service")} className="text-[#00B4CC] hover:underline">
+                        Use the Service Request tab.
+                      </button>
+                    </p>
+                  </form>
+                </Form>
+              )}
             </motion.div>
           </div>
         </div>
