@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
   Zap, ShieldCheck, Clock, CheckCircle2, ChevronRight,
-  Phone, Mail, MapPin, Star, AlertTriangle, Wrench, Eye
+  Phone, Mail, MapPin, Star, AlertTriangle, Wrench, Eye, Quote
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
@@ -623,7 +623,7 @@ export default function Home() {
       <section className="py-20" style={{ backgroundColor: "#0A1628" }}>
         <div className="container mx-auto px-4 md:px-6 max-w-3xl text-center">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}>
-            <Star className="h-8 w-8 text-[#00B4CC] mx-auto mb-6" />
+            <Quote className="h-10 w-10 text-[#00B4CC] mx-auto mb-6 opacity-80" />
             <blockquote className="text-xl md:text-2xl text-white font-medium leading-relaxed mb-6 italic">
               "Delta Wye took our property from darkness to 90% in 6 months keeping with my budget."
             </blockquote>
