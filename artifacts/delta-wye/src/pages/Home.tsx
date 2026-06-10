@@ -529,6 +529,20 @@ export default function Home() {
                 </motion.div>
               ))}
             </motion.div>
+
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true }}
+              variants={fadeIn}
+              className="mt-10"
+            >
+              <a
+                href="/our-story"
+                className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors uppercase tracking-widest text-xs font-bold border border-white/20 hover:border-white/50 rounded px-5 py-3"
+              >
+                Read Our Full Story
+                <ChevronRight className="h-4 w-4" />
+              </a>
+            </motion.div>
           </div>
         </div>
       </section>
