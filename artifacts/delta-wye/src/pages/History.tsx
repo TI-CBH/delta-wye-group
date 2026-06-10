@@ -167,8 +167,8 @@ export default function History() {
             >
               Our<br />
               <span
-                className="text-transparent bg-clip-text"
-                style={{ backgroundImage: "linear-gradient(90deg, #1A5BC4, #00B4CC)" }}
+                className="text-transparent bg-clip-text animate-gradient-text font-bold"
+                style={{ backgroundImage: "linear-gradient(90deg, #1A5BC4, #00B4CC, #1A5BC4)" }}
               >
                 Story
               </span>
