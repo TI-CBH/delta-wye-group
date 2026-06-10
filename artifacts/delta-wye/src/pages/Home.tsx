@@ -76,11 +76,12 @@ export default function Home() {
 
   const onServiceSubmit = async (data: z.infer<typeof serviceSchema>) => {
     try {
-      await fetch("/", {
+      const res = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: encode({ "form-name": "service-request", "bot-field": "", ...data }),
       });
+      if (!res.ok) throw new Error(`${res.status}`);
       toast({
         title: "Service Request Sent",
         description: "Our dispatch team will be in touch shortly. For emergencies, call 501.733.9922.",
@@ -94,11 +95,12 @@ export default function Home() {
 
   const onGeneralSubmit = async (data: z.infer<typeof generalSchema>) => {
     try {
-      await fetch("/", {
+      const res = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: encode({ "form-name": "general-inquiry", "bot-field": "", ...data }),
       });
+      if (!res.ok) throw new Error(`${res.status}`);
       toast({
         title: "Message Sent",
         description: "We received your message and will respond soon.",
