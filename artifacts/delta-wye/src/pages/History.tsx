@@ -64,7 +64,7 @@ export default function History() {
   const timelineRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: timelineRef,
-    offset: ["start 85%", "end 25%"],
+    offset: ["start 50%", "end 20%"],
   });
   const lineProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
   const lineScaleY = useTransform(lineProgress, [0, 1], [0, 1]);
@@ -190,9 +190,10 @@ export default function History() {
       </section>
 
       {/* ── Timeline ─────────────────────────────────────────────── */}
-      <section ref={timelineRef} className="py-24 md:py-36" style={{ backgroundColor: "#0A1628" }}>
+      <section className="py-24 md:py-36" style={{ backgroundColor: "#0A1628" }}>
         <div className="container mx-auto px-4 md:px-6 max-w-4xl">
           <motion.div
+            ref={timelineRef}
             initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={staggerContainer}
             className="relative"
