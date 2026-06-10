@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Phone, Mail, MapPin, ChevronRight, Zap } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import logoPath from "@/assets/images/logo.png";
 
 const fadeIn = {
@@ -62,6 +62,13 @@ export default function History() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const timelineRef = useRef<HTMLDivElement>(null);
+  // One ref slot per milestone circle so we can measure actual DOM positions
+  const circleRefs = useRef<(HTMLDivElement | null)[]>(Array(milestones.length).fill(null));
+  // Thresholds derived from measured positions; seeded with even fallback
+  const thresholdsRef = useRef<number[]>(
+    milestones.map((_, i) => i / (milestones.length - 1))
+  );
+
   const { scrollYProgress } = useScroll({
     target: timelineRef,
     offset: ["start 50%", "end 20%"],
@@ -70,13 +77,25 @@ export default function History() {
   const lineScaleY = useTransform(lineProgress, [0, 1], [0, 1]);
   const sparkOpacity = useTransform(lineProgress, [0, 0.04], [0, 1]);
 
+  // After first paint, measure each circle's position inside the container and
+  // store the fractions so the cursor-to-circle sync is pixel-accurate.
+  useEffect(() => {
+    const container = timelineRef.current;
+    if (!container) return;
+    const containerRect = container.getBoundingClientRect();
+    const measured = circleRefs.current.map(el => {
+      if (!el) return 0;
+      const r = el.getBoundingClientRect();
+      return (r.top + r.height / 2 - containerRect.top) / containerRect.height;
+    });
+    if (measured.some(t => t > 0)) thresholdsRef.current = measured;
+  }, []);
+
   const [activeMilestones, setActiveMilestones] = useState<Set<number>>(new Set());
   useMotionValueEvent(lineProgress, "change", (latest) => {
     setActiveMilestones(prev => {
       const next = new Set(prev);
-      milestones.forEach((_, i) => {
-        // Distribute thresholds evenly from 0.05 to 0.95 across all milestones
-        const threshold = i * (0.9 / (milestones.length - 1)) + 0.05;
+      thresholdsRef.current.forEach((threshold, i) => {
         if (latest >= threshold && !prev.has(i)) next.add(i);
       });
       return next.size === prev.size ? prev : next;
@@ -254,12 +273,18 @@ export default function History() {
                     isLeft ? "md:flex-row" : "md:flex-row-reverse"
                   }`}
                 >
-                  {/* Content */}
-                  <div className={`flex-1 pl-10 md:pl-0 ${isLeft ? "md:pr-12 md:text-right" : "md:pl-12"}`}>
+                  {/* Content — fades in as it enters the bottom of the viewport */}
+                  <motion.div
+                    className={`flex-1 pl-10 md:pl-0 ${isLeft ? "md:pr-12 md:text-right" : "md:pl-12"}`}
+                    initial={{ opacity: 0, y: 28 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "0px 0px -60px 0px" }}
+                    transition={{ duration: 0.55, ease: "easeOut" }}
+                  >
                     <span className="text-[#00B4CC] text-xs font-bold uppercase tracking-[0.25em] block mb-2">{m.year}</span>
                     <h3 className="font-display text-2xl md:text-3xl text-white uppercase tracking-wide mb-3">{m.title}</h3>
                     <p className="text-white/60 leading-relaxed">{m.body}</p>
-                  </div>
+                  </motion.div>
 
                   {/* Ripple ring — fires when the line cursor reaches this circle */}
                   <motion.div
@@ -274,6 +299,7 @@ export default function History() {
 
                   {/* Dot — lights up when the line cursor reaches this circle */}
                   <motion.div
+                    ref={(el) => { circleRefs.current[i] = el; }}
                     className="absolute left-0 md:left-1/2 top-1 md:-translate-x-1/2 w-9 h-9 rounded-full border-2 flex items-center justify-center shrink-0 z-10"
                     style={{ backgroundColor: "#0A1628" }}
                     initial={{ borderColor: "#1A5BC4", boxShadow: "0 0 0px transparent" }}
