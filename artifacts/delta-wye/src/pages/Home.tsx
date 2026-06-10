@@ -238,19 +238,12 @@ export default function Home() {
       </nav>
 
       {/* ── Hero ───────────────────────────────────────────────── */}
-      <section id="home" className="relative pt-32 pb-20 md:pt-48 md:pb-32 min-h-[92vh] flex items-center">
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <img
-            src={teamPhotoPath}
-            alt="Delta Wye Group team"
-            className="w-full h-full object-cover opacity-40 object-top"
-          />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to top, #0A1628 10%, #0D2B8C88 60%, #0D2B8C44 100%)" }} />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to right, #0A162899 0%, #0A162844 60%, transparent 100%)" }} />
-        </div>
+      <section id="home" className="relative min-h-[92vh] flex flex-col md:flex-row overflow-hidden" style={{ backgroundColor: "#0A1628" }}>
 
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-3xl">
+        {/* Left: Content */}
+        <div className="flex-1 flex flex-col justify-center pt-20 pb-12 px-6 md:px-10 lg:px-16 xl:px-20 relative">
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 10% 50%, #0D2B8C44 0%, transparent 65%)" }} />
+          <div className="relative z-10 max-w-xl">
             <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
 
               <motion.div variants={fadeIn} className="flex items-center gap-3 mb-6">
@@ -260,7 +253,7 @@ export default function Home() {
 
               <motion.h1
                 variants={fadeIn}
-                className="font-display md:text-[4.55rem] lg:text-[5.6rem] text-white tracking-wide mb-6 uppercase text-[56px] leading-[0.9]"
+                className="font-display text-[44px] md:text-[3.8rem] lg:text-[4.6rem] text-white tracking-wide mb-6 uppercase leading-[0.9]"
               >
                 PUTTING<br />
                 <span
@@ -274,7 +267,7 @@ export default function Home() {
 
               <motion.p
                 variants={fadeIn}
-                className="text-lg md:text-xl text-white/70 mb-10 max-w-xl font-medium leading-relaxed"
+                className="text-lg md:text-xl text-white/70 mb-10 font-medium leading-relaxed"
               >
                 Trusted Arkansas electricians since 2011.{" "}<br />
                 We show up. We fix it right.{" "}<br />
@@ -318,6 +311,20 @@ export default function Home() {
 
             </motion.div>
           </div>
+        </div>
+
+        {/* Right: Team photo — desktop only */}
+        <div className="hidden md:block md:w-[46%] relative">
+          <img
+            src={teamPhotoPath}
+            alt="Delta Wye Group team"
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          {/* Blend left edge into navy */}
+          <div className="absolute inset-y-0 left-0 w-40 pointer-events-none" style={{ background: "linear-gradient(to right, #0A1628, transparent)" }} />
+          {/* Top & bottom fades */}
+          <div className="absolute inset-x-0 top-0 h-24 pointer-events-none" style={{ background: "linear-gradient(to bottom, #0A1628, transparent)" }} />
+          <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none" style={{ background: "linear-gradient(to top, #0A1628, transparent)" }} />
         </div>
       </section>
 
