@@ -661,7 +661,7 @@ export default function Home() {
             </a>
             <Button
               size="lg"
-              onClick={() => scrollTo("contact")}
+              onClick={() => { setFormType("service"); scrollTo("contact-form"); }}
               className="font-bold uppercase tracking-widest h-14 px-8 text-base"
               style={{ backgroundColor: "#00B4CC", color: "#0A1628" }}
             >
@@ -736,6 +736,7 @@ export default function Home() {
             <motion.div
               initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={fadeIn}
+              id="contact-form"
               className="lg:col-span-3 border border-white/10 p-8 md:p-10 rounded-lg"
               style={{ backgroundColor: "rgba(255,255,255,0.04)" }}
             >
